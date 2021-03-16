@@ -8,19 +8,32 @@ app.use(morgan("combined"))
 
 app.get('/user/:id', (req, res) => {
     console.log("Fetching user with id: " + req.params.id)
-
+    
     const connection = mysql.createConnection({
-        host: "localhost",
-        user: "root",
+        host: 'localhost',
+        user: 'root',
+        password: "lskr06!@",
         database: "lbta_mysql"
     })
 
-    connection.query("SELECT * FROM users", (err, rows, fields) => {
+    const userId = req.params.id
+    const queryString = "SELECT * FROM users WHERE id = ?"
+    connection.query(queryString, [userId], (err, rows, fields) => {
+        if (err){
+            console.log("Failed to query for users: " +err)
+            res.sendStatus(500)
+            return
+        }
         console.log("I think we fetched users successfully")
-        res.json(rows)
+
+        const users = rows.map((row) => {
+            return {abc: "123"}
+        })
+
+        res.json(users)
     })
 
-    res.end()
+    // res.end()
 })
 
 app.get("/", (req, res) =>{
